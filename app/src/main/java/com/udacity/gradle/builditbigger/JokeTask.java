@@ -51,6 +51,9 @@ public class JokeTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
+        if (isCancelled()) {
+            return;
+        }
         OnJokeRetrievedListener listener = mListener.get();
         if (listener != null) {
             listener.onJokeRetrieved(result);

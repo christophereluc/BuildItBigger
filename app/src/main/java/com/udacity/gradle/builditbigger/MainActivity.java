@@ -1,8 +1,11 @@
 package com.udacity.gradle.builditbigger;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,9 +13,10 @@ import android.view.View;
 import com.christopherluc.androidjokelibrary.JokeActivity;
 
 
-public class MainActivity extends AppCompatActivity implements JokeTask.OnJokeRetrievedListener {
+public class MainActivity extends AppCompatActivity implements JokeTask.OnJokeRetrievedListener, DialogInterface.OnCancelListener {
 
     private ProgressDialog mProgressDialog;
+    private AsyncTask mTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +29,9 @@ public class MainActivity extends AppCompatActivity implements JokeTask.OnJokeRe
         super.onDestroy();
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
+        }
+        if (mTask != null) {
+            mTask.cancel(true);
         }
     }
 
@@ -51,16 +58,29 @@ public class MainActivity extends AppCompatActivity implements JokeTask.OnJokeRe
     }
 
     public void tellJoke(View view){
-        new JokeTask(this).execute();
+        mTask = new JokeTask(this).execute();
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setMessage(getString(R.string.loading));
+        mProgressDialog.setOnCancelListener(this);
         mProgressDialog.show();
     }
 
     @Override
     public void onJokeRetrieved(String joke) {
-        mProgressDialog.dismiss();
-        mProgressDialog = null;
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+        }
+        if (TextUtils.isEmpty(joke)) {
+            return;
+        }
         startActivity(JokeActivity.getIntent(this, joke));
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        if (mTask != null) {
+            mTask.cancel(true);
+        }
     }
 }

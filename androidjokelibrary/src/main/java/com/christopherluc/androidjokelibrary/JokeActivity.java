@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 public class JokeActivity extends AppCompatActivity {
@@ -23,7 +24,7 @@ public class JokeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_joke);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         String joke = getIntent().getStringExtra(EXTRA_JOKE);
         if (TextUtils.isEmpty(joke)) {
             displayErrorAndFinish();
@@ -34,6 +35,17 @@ public class JokeActivity extends AppCompatActivity {
                 textView.setText(joke);
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void displayErrorAndFinish() {

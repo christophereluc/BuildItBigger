@@ -16,9 +16,8 @@ public class JokeTaskTest extends AndroidTestCase {
         new JokeTask(new JokeTask.OnJokeRetrievedListener() {
             @Override
             public void onJokeRetrieved(String joke) {
-                if (TextUtils.isEmpty(joke)) {
-                    fail();
-                }
+                //Assert that we retrieved a string successfull from the task
+                assertTrue(!TextUtils.isEmpty(joke));
                 latch.countDown();
             }
         }).execute();
